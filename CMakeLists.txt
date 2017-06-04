@@ -10,17 +10,18 @@ project(sbpl_utils)
 set(ROS_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "-std=c++11")
 
-find_package(catkin REQUIRED COMPONENTS sbpl)
+find_package(catkin REQUIRED COMPONENTS )
+find_package(sbpl REQUIRED)
 # find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED COMPONENTS graph)
 
 include_directories(${PROJECT_SOURCE_DIR}/include ${OpenCV_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS})
+    ${catkin_INCLUDE_DIRS} ${sbpl_INCLUDE_DIRS})
 
 catkin_package(
-    DEPENDS
+    DEPENDS sbpl
       # OpenCV 
-    CATKIN_DEPENDS sbpl
+    CATKIN_DEPENDS
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
 )
@@ -30,8 +31,10 @@ add_library(${PROJECT_NAME}
             src/hash_manager/hash_manager.cpp
             src/environments/boost_graph_environment.cpp
             src/visualization/grid_visualizer.cpp)
-          target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBRARIES}
-            ${catkin_LIBRARIES})
+
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBRARIES}
+    #${catkin_LIBRARIES}
+    sbpl)
 
 catkin_add_gtest(hash_manager_test tests/hash_manager_test.cpp examples/hashable_states.cpp)
 target_link_libraries(hash_manager_test ${PROJECT_NAME} libopencv)
